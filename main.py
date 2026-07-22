@@ -1,4 +1,5 @@
 from bidders import Bidder
+from auction_house import greedy_auction
 from itertools import combinations
 from random import choice, randint, sample, seed, uniform
 
@@ -35,9 +36,9 @@ def generate_synergies(items):
 
     return synergies
 
-bidders = generate_bidders(8, items)
-print("All Bidders and their bids for {a, c}")
-for bidder in bidders:
-    print(f"Bidder ID: {bidder.id}")
-    print(f"Bid for {{a, c}}: {bidder.get_bid(['a', 'c'])}")
+for i in range(10):
+    print(f"--- Auction {i+1} ---")
+    bidders = generate_bidders(8, items)
+    print("Bidders ready!")
+    greedy_auction(bidders, items)
 
