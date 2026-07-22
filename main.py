@@ -4,14 +4,12 @@ from random import choice, randint, sample, seed, uniform
 
 seed(42)
 
-items = [1,2,3,4,5,6]
+items = ['a', 'b', 'c', 'd', 'e', 'f']
 
 def generate_bidders(num_bidders, items):
     bidders = []
     for i in range(num_bidders):
-        values = {}
-        for j in range(len(items)+1):
-            values[j] = randint(1, 20)
+        values = {item: randint(1, 20) for item in items}
         synergies = generate_synergies(items)
         bidder = Bidder(i, synergies, values)
         bidders.append(bidder)
@@ -38,8 +36,8 @@ def generate_synergies(items):
     return synergies
 
 bidders = generate_bidders(8, items)
+print("All Bidders and their bids for {a, c}")
 for bidder in bidders:
     print(f"Bidder ID: {bidder.id}")
-    print(bidder.bids)
-
+    print(f"Bid for {{a, c}}: {bidder.get_bid(['a', 'c'])}")
 

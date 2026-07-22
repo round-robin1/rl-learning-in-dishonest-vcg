@@ -17,5 +17,8 @@ class Bidder():
                 bundle_value = sum(values[item] for item in combo)
                 synergy = normalized_synergies.get(key, 1)
                 bids[key] = bundle_value * synergy
-
         return bids
+    
+    def get_bid(self, bundle):
+        key = frozenset(bundle)
+        return self.bids.get(key, 0)
