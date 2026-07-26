@@ -23,11 +23,7 @@ def greedy_auction(bidders, items):
             finished_buyers.append(bidder_id)
             allocation.append((bidder_id, bundle, bid_value, density))
 
-    payments = calculate_payments(bidders, items)
-    for bidder_id, bundle, bid_value, density in allocation:
-        payment = payments.get(bidder_id, 0)
-        print(f"Bidder {bidder_id} wins bundle {bundle} with bid {bid_value} (density={density:.2f}) and pays {payment}")
-
+    return allocation
 
 def calculate_payments(bidders, items):
     payments = {}
