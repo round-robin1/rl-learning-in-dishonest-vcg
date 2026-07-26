@@ -60,4 +60,3 @@ def calculate_payments(bidders, items):
 
 def proper_auction(bidders, items):
     return -1
-    

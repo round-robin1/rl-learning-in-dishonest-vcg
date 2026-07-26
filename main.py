@@ -1,5 +1,5 @@
 from bidders import Bidder, QLearningBidder
-from auction_house import greedy_auction, calculate_payments
+from auction_house import greedy_auction, calculate_payments, proper_auction
 from graph_helper import build_graph
 from itertools import combinations
 from random import choice, randint, sample, seed, uniform
@@ -9,7 +9,7 @@ seed(42)
 
 items = ['a', 'b', 'c', 'd', 'e', 'f']
 
-def generate_bidders(num_bidders, items):
+def generate_bidders(num_bidders, items, honesty = 1.0):
     bidders = []
     for i in range(num_bidders):
         values = {item: randint(1, 20) for item in items}
@@ -38,10 +38,14 @@ def generate_synergies(items):
 
     return synergies
 
-def run_auction(bidders, q_bidder, items, auction_number):
+def run_auction(q_bidder, items, auction_number, auction_type, bidder_honesty=1.0):
+    bidders = generate_bidders(8, items, bidder_honesty)
     q_bidder.choose_action()
     active_bidders = bidders + [q_bidder]
-    allocation = greedy_auction(active_bidders, items)
+    if auction_type == 'greedy':
+        allocation = greedy_auction(active_bidders, items)
+    else:
+        allocation == proper_auction(active_bidders, items)
     payments = calculate_payments(active_bidders, items)
 
     q_bundle = None
@@ -59,8 +63,7 @@ def run_auction(bidders, q_bidder, items, auction_number):
 
 q_learning_bidder = QLearningBidder(8, generate_synergies(items), {item: randint(1, 20) for item in items})
 for i in range(500):
-    normal_bidders = generate_bidders(8, items)
-    run_auction(normal_bidders, q_learning_bidder, items, i + 1)
+    run_auction(q_learning_bidder, items, i + 1, 'greedy', 1.0)
     q_learning_bidder.decay_epsilon()
 auctions = [entry['auction'] for entry in q_learning_bidder.history]
 bid_pcts = [entry['bid_pct'] for entry in q_learning_bidder.history]
