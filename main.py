@@ -60,20 +60,6 @@ def run_auction(q_bidder, items, auction_number, auction_type, bidder_honesty=1.
     if q_bidder.history:
         q_bidder.history[-1]['auction'] = auction_number
 
-
-q_learning_bidder = QLearningBidder(8, generate_synergies(items), {item: randint(1, 20) for item in items})
-for i in range(500):
-    run_auction(q_learning_bidder, items, i + 1, 'greedy', 1.0)
-    q_learning_bidder.decay_epsilon()
-auctions = [entry['auction'] for entry in q_learning_bidder.history]
-bid_pcts = [entry['bid_pct'] for entry in q_learning_bidder.history]
-policy_pcts = [entry['policy_action_pct'] for entry in q_learning_bidder.history]
-profit_pcts = [entry['profit_pct'] for entry in q_learning_bidder.history]
-
-plt.style.use('ggplot')
-window = min(200, max(1, len(auctions) // 10))
-
-
 def moving_average(data, window):
     averaged = []
     for i in range(len(data)):
@@ -81,9 +67,34 @@ def moving_average(data, window):
         averaged.append(sum(data[start:i + 1]) / (i - start + 1))
     return averaged
 
-bid_ma = moving_average(policy_pcts, window)
-profit_ma = moving_average(profit_pcts, window)
-sample_step = max(1, len(auctions) // 200)
-sample_idx = list(range(0, len(auctions), sample_step))
+def run_auction_set(count, items, auction_type, bidder_honesty=1.0):
+    q_learning_bidder = QLearningBidder(8, generate_synergies(items), {item: randint(1, 20) for item in items})
+    for i in range(count):
+        run_auction(q_learning_bidder, items, i + 1, auction_type, bidder_honesty)
+        q_learning_bidder.decay_epsilon()
+    auctions = [entry['auction'] for entry in q_learning_bidder.history]
+    bid_pcts = [entry['bid_pct'] for entry in q_learning_bidder.history]
+    policy_pcts = [entry['policy_action_pct'] for entry in q_learning_bidder.history]
+    profit_pcts = [entry['profit_pct'] for entry in q_learning_bidder.history]
 
-build_graph('honest_imperfect.png', auctions, bid_ma, profit_ma, bid_pcts, profit_pcts, sample_idx, window)
+    plt.style.use('ggplot')
+    window = min(200, max(1, len(auctions) // 10))
+
+    bid_ma = moving_average(policy_pcts, window)
+    profit_ma = moving_average(profit_pcts, window)
+    sample_step = max(1, len(auctions) // 200)
+    sample_idx = list(range(0, len(auctions), sample_step))
+
+    if auction_type == 'greedy':
+        if bidder_honesty == 1.0:
+            graph_name = 'honest_greedy.png'
+        else:
+            graph_name = 'dishonest_greedy.png'
+    else:
+        if bidder_honesty == 1.0:
+            graph_name = 'honest_proper.png'
+        else:
+            graph_name = 'dishonest_proper.png'
+    build_graph(graph_name, auctions, bid_ma, profit_ma, bid_pcts, profit_pcts, sample_idx, window)
+
+run_auction_set(500, items, 'greedy', bidder_honesty=1.0)
