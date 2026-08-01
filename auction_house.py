@@ -26,34 +26,21 @@ def greedy_auction(bidders, items):
 
     return allocation
 
-def calculate_payments(bidders, items):
+def calculate_payments(bidders, items, allocation=None):
     payments = {}
-    allocation = []
-    sold_items = []
-    finished_buyers = []
-    bids = gather_bids(bidders, items)
 
-    for bid_value, density, bidder_id, bundle in bids:
-        if all(item not in sold_items for item in bundle) and bidder_id not in finished_buyers:
-            sold_items.extend(bundle)
-            finished_buyers.append(bidder_id)
-            allocation.append((bidder_id, bundle, bid_value))
+    if allocation is None:
+        allocation = greedy_auction(bidders, items)
+        allocation_welfare_rule = greedy_auction
+    else:
+        allocation_welfare_rule = proper_auction
 
-    total_welfare = round(sum(bid_value for _, _, bid_value in allocation), 2)
+    total_welfare = round(sum(bid_value for _, _, bid_value, _ in allocation), 2)
 
-    for bidder_id, bundle, bid_value in allocation:
+    for bidder_id, bundle, bid_value, density in allocation:
         remaining_bidders = [b for b in bidders if b.id != bidder_id]
-        remaining_sold = []
-        remaining_finished = []
-        remaining_bids = gather_bids(remaining_bidders, items)
-        replacement_welfare = 0
-
-        for other_value, other_density, other_id, other_bundle in remaining_bids:
-            if all(item not in remaining_sold for item in other_bundle) and other_id not in remaining_finished:
-                remaining_sold.extend(other_bundle)
-                remaining_finished.append(other_id)
-                replacement_welfare += other_value
-
+        remaining_allocation = allocation_welfare_rule(remaining_bidders, items)
+        replacement_welfare = round(sum(other_value for _, _, other_value, _ in remaining_allocation), 2)
         other_welfare = round(total_welfare - bid_value, 2)
         payments[bidder_id] = round(max(0, replacement_welfare - other_welfare), 2)
 

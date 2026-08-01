@@ -65,7 +65,7 @@ class QLearningBidder(Bidder):
         best_actions = [a for a, q in self.q_values.items() if q == max_q]
         return choice(best_actions)
 
-    def decay_epsilon(self, min_epsilon=0.01, decay_rate=0.99999):
+    def decay_epsilon(self, min_epsilon=0.01, decay_rate=0.9999):
         self.epsilon = max(min_epsilon, self.epsilon * decay_rate)
 
     def get_bid(self, bundle):
