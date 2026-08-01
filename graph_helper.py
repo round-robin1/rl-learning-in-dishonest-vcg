@@ -7,6 +7,14 @@ import matplotlib.ticker as mticker
 def build_graph(name, auctions, bid_ma, profit_ma, bid_pcts, profit_pcts, sample_idx, window):
     fig, ax = plt.subplots(figsize=(6, 6))
     ax2 = ax.twinx()
+
+    scale_min = -100
+    scale_max = 100
+
+    ax.set_ylim(scale_min, scale_max)
+    ax2.set_ylim(scale_min, scale_max)
+    ax2.set_yticks(ax.get_yticks())
+
     ax.plot(auctions, bid_ma, color='tab:blue', linewidth=2, label=f'Greedy policy bid % (MA{window})')
     ax2.plot(auctions, profit_ma, color='tab:orange', linewidth=2, label=f'Profit % (MA{window})')
     ax.scatter([auctions[i] for i in sample_idx], [bid_pcts[i] for i in sample_idx], color='tab:blue', alpha=0.15, s=10, label='Exploring bid %')
