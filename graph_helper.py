@@ -15,7 +15,7 @@ def build_graph(name, auctions, bid_ma, profit_ma, bid_pcts, profit_pcts, sample
     ax2.set_ylim(scale_min, scale_max)
     ax2.set_yticks(ax.get_yticks())
 
-    ax.plot(auctions, bid_ma, color='tab:blue', linewidth=2, label=f'Greedy policy bid % (MA{window})')
+    ax.plot(auctions, bid_ma, color='tab:blue', linewidth=2, label=f'Bid % (MA{window})')
     ax2.plot(auctions, profit_ma, color='tab:orange', linewidth=2, label=f'Profit % (MA{window})')
     ax.scatter([auctions[i] for i in sample_idx], [bid_pcts[i] for i in sample_idx], color='tab:blue', alpha=0.15, s=10, label='Exploring bid %')
     ax2.scatter([auctions[i] for i in sample_idx], [profit_pcts[i] for i in sample_idx], color='tab:orange', alpha=0.15, s=10)
