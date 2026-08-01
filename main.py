@@ -46,7 +46,7 @@ def run_auction(q_bidder, items, auction_number, auction_type, bidder_honesty=1.
         allocation = greedy_auction(active_bidders, items)
     else:
         allocation = proper_auction(active_bidders, items)
-    payments = calculate_payments(active_bidders, items)
+    payments = calculate_payments(active_bidders, items, allocation=allocation)
 
     q_bundle = None
     q_payment = 0.0
@@ -78,7 +78,7 @@ def run_auction_set(count, items, auction_type, bidder_honesty=1.0):
     profit_pcts = [entry['profit_pct'] for entry in q_learning_bidder.history]
 
     plt.style.use('ggplot')
-    window = min(200, max(1, len(auctions) // 10))
+    window = min(200, max(1, len(auctions) // 20))
 
     bid_ma = moving_average(policy_pcts, window)
     profit_ma = moving_average(profit_pcts, window)
