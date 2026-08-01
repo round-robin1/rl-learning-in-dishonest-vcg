@@ -45,7 +45,7 @@ def run_auction(q_bidder, items, auction_number, auction_type, bidder_honesty=1.
     if auction_type == 'greedy':
         allocation = greedy_auction(active_bidders, items)
     else:
-        allocation == proper_auction(active_bidders, items)
+        allocation = proper_auction(active_bidders, items)
     payments = calculate_payments(active_bidders, items)
 
     q_bundle = None
@@ -98,3 +98,4 @@ def run_auction_set(count, items, auction_type, bidder_honesty=1.0):
     build_graph(graph_name, auctions, bid_ma, profit_ma, bid_pcts, profit_pcts, sample_idx, window)
 
 run_auction_set(500, items, 'greedy', bidder_honesty=1.0)
+run_auction_set(500, items, 'proper', bidder_honesty=1.0)
