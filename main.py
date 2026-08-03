@@ -14,7 +14,10 @@ def generate_bidders(num_bidders, items, honesty = 1.0):
     for i in range(num_bidders):
         values = {item: randint(1, 20) for item in items}
         synergies = generate_synergies(items)
-        bidder = Bidder(i, synergies, values)
+        if i+1/num_bidders <= honesty:
+            bidder = Bidder(i, synergies, values, honest=True)
+        else:
+            bidder = Bidder(i, synergies, values, honest=False)
         bidders.append(bidder)
     return bidders
 
@@ -99,3 +102,5 @@ def run_auction_set(count, items, auction_type, bidder_honesty=1.0):
 
 run_auction_set(500, items, 'greedy', bidder_honesty=1.0)
 run_auction_set(500, items, 'proper', bidder_honesty=1.0)
+run_auction_set(500, items, 'greedy', bidder_honesty=0.5)
+run_auction_set(500, items, 'proper', bidder_honesty=0.5)
