@@ -3,8 +3,9 @@ from random import choice, random
 
 
 class Bidder():
-    def __init__(self, id, synergies, values):
+    def __init__(self, id, synergies, values, honest=True):
         self.id = id
+        self.honest = honest
         self.bids = self.calculate_bids(synergies, values)
 
     def calculate_bids(self, synergies, values):
@@ -17,7 +18,10 @@ class Bidder():
                 key = frozenset(combo)
                 bundle_value = sum(values[item] for item in combo)
                 synergy = normalized_synergies.get(key, 1)
-                bids[key] = bundle_value * synergy
+                if self.honest != True:
+                    bids[key] = bundle_value * synergy * 1.1
+                else:
+                    bids[key] = bundle_value * synergy
         return bids
     
     def get_bid(self, bundle):
